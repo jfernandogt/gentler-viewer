@@ -28,6 +28,8 @@ const translations = {
     "invalid-url": "Invalid URL format",
     "valid-url": "Valid URL",
     "select-files-message": "Please select audio and JSON files to begin",
+    "dark-mode": "Dark Mode",
+    "use-examples": "Use Examples",
   },
   es: {
     title: "🎵 Visualizador de Transcripciones de Audio Gentle",
@@ -58,6 +60,8 @@ const translations = {
     "valid-url": "URL válida",
     "select-files-message":
       "Por favor selecciona archivos de audio y JSON para comenzar",
+    "dark-mode": "Modo Oscuro",
+    "use-examples": "Usar Ejemplos",
   },
 };
 
@@ -90,6 +94,9 @@ function updateLanguage(lang) {
   ) {
     $trans.textContent = translations[lang].loading;
   }
+
+  // Update dark mode button tooltip
+  updateDarkModeText();
 
   // Save language preference
   localStorage.setItem("preferred-language", lang);
@@ -626,9 +633,86 @@ function updateActiveSpeedButton(activeButton) {
   }
 }
 
+// Dark mode functionality
+let currentTheme = "light";
+
+function toggleDarkMode() {
+  const body = document.body;
+  const darkModeToggle = document.getElementById("darkModeToggle");
+
+  if (currentTheme === "light") {
+    // Switch to dark mode
+    body.setAttribute("data-theme", "dark");
+    darkModeToggle.classList.add("active");
+    darkModeToggle.textContent = "☀️";
+    darkModeToggle.title =
+      currentLanguage === "es"
+        ? "Cambiar a modo claro"
+        : "Switch to Light Mode";
+    currentTheme = "dark";
+  } else {
+    // Switch to light mode
+    body.removeAttribute("data-theme");
+    darkModeToggle.classList.remove("active");
+    darkModeToggle.textContent = "🌙";
+    darkModeToggle.title =
+      currentLanguage === "es"
+        ? "Cambiar a modo oscuro"
+        : "Switch to Dark Mode";
+    currentTheme = "light";
+  }
+
+  // Save theme preference
+  localStorage.setItem("preferred-theme", currentTheme);
+}
+
+function initDarkMode() {
+  const darkModeToggle = document.getElementById("darkModeToggle");
+
+  // Load saved theme preference
+  const savedTheme = localStorage.getItem("preferred-theme") || "light";
+  currentTheme = savedTheme;
+
+  // Apply saved theme
+  if (savedTheme === "dark") {
+    document.body.setAttribute("data-theme", "dark");
+    darkModeToggle.classList.add("active");
+    darkModeToggle.textContent = "☀️";
+    darkModeToggle.title =
+      currentLanguage === "es"
+        ? "Cambiar a modo claro"
+        : "Switch to Light Mode";
+  } else {
+    darkModeToggle.textContent = "🌙";
+    darkModeToggle.title =
+      currentLanguage === "es"
+        ? "Cambiar a modo oscuro"
+        : "Switch to Dark Mode";
+  }
+
+  // Add event listener
+  darkModeToggle.addEventListener("click", toggleDarkMode);
+}
+
+// Update dark mode button text when language changes
+function updateDarkModeText() {
+  const darkModeToggle = document.getElementById("darkModeToggle");
+  if (currentTheme === "dark") {
+    darkModeToggle.title =
+      currentLanguage === "es"
+        ? "Cambiar a modo claro"
+        : "Switch to Light Mode";
+  } else {
+    darkModeToggle.title =
+      currentLanguage === "es"
+        ? "Cambiar a modo oscuro"
+        : "Switch to Dark Mode";
+  }
+}
+
 // Set initial empty state message
 function setInitialMessage() {
-  $trans.innerHTML = `<div style="text-align: center; color: #6c757d; padding: 40px; font-style: italic;">
+  $trans.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px; font-style: italic;">
     ${
       translations[currentLanguage]["select-files-message"] ||
       "Please select audio and JSON files to begin"
@@ -641,8 +725,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize language system
   initLanguageSelector();
 
+  // Initialize dark mode
+  initDarkMode();
+
   // Initialize with empty state - no automatic loading
-  $trans.innerHTML = `<div style="text-align: center; color: #6c757d; padding: 40px; font-style: italic;">
+  $trans.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px; font-style: italic;">
     ${
       translations[currentLanguage]
         ? translations[currentLanguage]["select-files-message"] ||
