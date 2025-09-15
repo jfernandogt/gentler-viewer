@@ -283,6 +283,22 @@ function render(ret) {
   var $plaintext = document.createTextNode(txt);
   $trans.appendChild($plaintext);
   currentOffset = transcript.length;
+
+  // Scroll to transcript with offset for sticky audio controls
+  const transcriptContainer = document.querySelector(".transcript-container");
+  const audioControls = document.querySelector(".audio-controls");
+  const audioControlsHeight = audioControls ? audioControls.offsetHeight : 0;
+  const stickyOffset = 20; // From CSS: top: 20px
+  const totalOffset = audioControlsHeight + stickyOffset + 20; // Extra 20px margin
+
+  // Get the position of the transcript container
+  const transcriptTop = transcriptContainer.offsetTop;
+  const scrollToPosition = transcriptTop - totalOffset;
+
+  window.scrollTo({
+    top: scrollToPosition,
+    behavior: "smooth",
+  });
 }
 
 // Status rendering variables and functions
@@ -501,7 +517,7 @@ function loadUserFiles() {
         // Clear the success message after 2 seconds and render the transcript
         setTimeout(() => {
           render(jsonData);
-        }, 2000);
+        }, 1000);
       } catch (error) {
         console.error("Error parsing JSON:", error);
         alert(translations[currentLanguage]["json-error"]);
