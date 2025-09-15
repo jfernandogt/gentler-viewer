@@ -405,6 +405,7 @@ function initFileUpload() {
   const audioFileName = document.getElementById("audioFileName");
   const jsonFileName = document.getElementById("jsonFileName");
   const loadFilesBtn = document.getElementById("loadFiles");
+  const useExamplesBtn = document.getElementById("useExamples");
 
   // Handle audio file selection
   audioFileInput.addEventListener("change", function (e) {
@@ -451,6 +452,18 @@ function initFileUpload() {
     } else {
       loadFromUrls();
     }
+  });
+
+  useExamplesBtn.addEventListener("click", function () {
+    const audioSrc = document.getElementById("audioUrl");
+    const jsonSrc = document.getElementById("jsonUrl");
+
+    const locationInfo = window.location.href;
+
+    audioSrc.value = `${locationInfo}examples/The-Hound-of-the-Baskervilles/chapter-1/a.wav`;
+    jsonSrc.value = `${locationInfo}examples/The-Hound-of-the-Baskervilles/chapter-1/align.json`;
+
+    loadFromUrls();
   });
 
   // Initialize button state
